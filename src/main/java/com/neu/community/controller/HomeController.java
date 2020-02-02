@@ -23,7 +23,9 @@ public class HomeController {
     private DiscussPostService discussPostService;
     @Autowired
     private UserService userService;
-
+    /*
+    * 显示首页贴子
+    * */
     @RequestMapping(path="/index",method = RequestMethod.GET)
     public String getIndexPage(Model model, Page page){
         page.setRows(discussPostService.findDiscussPostRows(0));
