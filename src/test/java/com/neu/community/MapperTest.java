@@ -1,11 +1,7 @@
 package com.neu.community;
 
-import com.neu.community.dao.DiscussPostMapper;
-import com.neu.community.dao.LoginTicketMapper;
-import com.neu.community.dao.UserMapper;
-import com.neu.community.entity.DiscussPost;
-import com.neu.community.entity.LoginTicket;
-import com.neu.community.entity.User;
+import com.neu.community.dao.*;
+import com.neu.community.entity.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +25,12 @@ public class MapperTest {
 
     @Autowired
     private LoginTicketMapper loginTicketMapper;
+
+    @Autowired
+    private CommentMapper commentMapper;
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Test
     public void testSelectUser(){
@@ -77,6 +79,20 @@ public class MapperTest {
     }
 
     @Test
+    public void testInsertPosts(){
+        DiscussPost discussPost = new DiscussPost();
+        discussPost.setUserId(153);
+        discussPost.setType(1);
+        discussPost.setTitle("宁愿输的是自己");
+        discussPost.setContent("真的很难过");
+        discussPost.setCreateTime(new Date(System.currentTimeMillis()));
+        discussPost.setScore(100.0);
+        discussPost.setStatus(0);
+        int res = discussPostMapper.insertDiscussPost(discussPost);
+        System.out.println(res);
+    }
+
+    @Test
     public void testInsertLoginTicket(){
 
         LoginTicket loginTicket = new LoginTicket();
@@ -95,5 +111,41 @@ public class MapperTest {
         loginTicketMapper.updateStatus("abc",1);
         loginTicket=loginTicketMapper.selectByTicket("abc");
         System.out.println(loginTicket);
+    }
+
+    @Test
+    public void testSelectDiscussPostById(){
+        System.out.println(discussPostMapper.selectDiscussPostById(281));
+    }
+
+    @Test
+    public void testSelectCommentsByEntity(){
+        List<Comment> res = commentMapper.selectCommentsByEntity(1,228,0,10);
+        for(Comment comment:res){
+            System.out.println(comment);
+        }
+    }
+
+    @Test
+    public void testSelectCountByEntity(){
+        System.out.println( commentMapper.selectCountByEntity(1,228));
+    }
+
+    @Test
+    public void testMessageMapper(){
+        List<Message> list = messageMapper.selectConversations(153,0,10);
+        for(Message msg :list){
+            System.out.println(msg);
+        }
+
+        System.out.println(messageMapper.selectConversationCount(153));
+
+        list = messageMapper.selectLetters("151_153",0,10);
+        for(Message msg :list){
+            System.out.println(msg);
+        }
+        System.out.println(messageMapper.selectLetterCount("151_153"));
+
+        System.out.println(messageMapper.selectLetterUnreadCount(153,"151_153"));
     }
 }

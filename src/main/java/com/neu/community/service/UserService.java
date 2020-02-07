@@ -189,4 +189,8 @@ public class UserService implements CommunityConstant {
         map.put("successMsg","修改成功");
         return map;
     }
+
+    public User findUserByName(String username){
+        return userMapper.selectByName(username);
+    }
 }
