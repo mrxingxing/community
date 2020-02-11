@@ -4,6 +4,7 @@ import com.neu.community.dao.DiscussPostMapper;
 import com.neu.community.entity.DiscussPost;
 import com.neu.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
@@ -17,6 +18,9 @@ public class DiscussPostService {
 
     @Autowired
     private SensitiveFilter sensitiveFilter;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit){
         return discussPostMapper.selectDiscussPosts(userId,offset,limit);

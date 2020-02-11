@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Mapper
 @Component(value = "LoginTicketMapper")
+@Deprecated
 public interface LoginTicketMapper {
 
     @Insert({

@@ -15,8 +15,9 @@ public interface CommunityConstant {
 
     //贴子
     int ENTITY_TYPE_POST=1;
-
+    //评论
     int ENTITY_TYPE_COMMENT=2;
-
+    //人
+    int ENTITY_TYPE_USER=3;
 
 }

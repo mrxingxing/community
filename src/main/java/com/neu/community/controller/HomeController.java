@@ -23,6 +23,7 @@ public class HomeController implements CommunityConstant {
 
     @Autowired
     private DiscussPostService discussPostService;
+
     @Autowired
     private UserService userService;
 
