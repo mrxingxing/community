@@ -1,6 +1,8 @@
 package com.neu.community.controller;
 
+import com.neu.community.Event.EventProducer;
 import com.neu.community.annotation.LoginRequired;
+import com.neu.community.entity.Event;
 import com.neu.community.entity.Page;
 import com.neu.community.entity.User;
 import com.neu.community.service.FollowService;
@@ -31,12 +33,25 @@ public class FollowController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventProducer eventProducer;
+
     @RequestMapping(path = "/follow",method = RequestMethod.POST)
     @ResponseBody
     @LoginRequired
     public String follow(int entityType,int entityId){
         User user = hostHolder.getUser();
         followService.follow(user.getId(),entityType,entityId);
+
+        //触发关注事件
+        Event event = new Event()
+                .setTopic(TOPIC_FOLLOW)
+                .setUserId(hostHolder.getUser().getId())
+                .setEntityType(entityType)
+                .setEntityId(entityId)
+                .setEntityUserId(entityId);
+        eventProducer.fireEvent(event);
+
         return CommunityUtil.getJSONString(0,"已关注");
     }
 

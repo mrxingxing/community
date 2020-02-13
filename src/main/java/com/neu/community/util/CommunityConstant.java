@@ -19,5 +19,14 @@ public interface CommunityConstant {
     int ENTITY_TYPE_COMMENT=2;
     //人
     int ENTITY_TYPE_USER=3;
+    //事件主题评论
+    String TOPIC_COMMENT="comment";
+    //事件主题点赞
+    String TOPIC_LIKE="like";
+    //事件主题关注
+    String TOPIC_FOLLOW="follow";
+    //SYSTEM的id
+    int SYSTEM_USER_ID = 1;
+
 
 }

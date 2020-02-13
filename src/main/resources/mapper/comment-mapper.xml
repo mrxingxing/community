@@ -18,10 +18,10 @@
         where status=0
         and entity_type=#{entityType}
         and entity_id=#{entityId}
-        order by create_time asc 
+        order by create_time desc
         limit #{offset},#{limit}
     </select>
-    
+
     <select id="selectCountByEntity" resultType="int">
         select count(id)
         from comment
@@ -35,4 +35,27 @@
         values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
     </insert>
 
+    <select id="selectUserCommentsById" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
+        where user_id = #{userId}
+        and status=0
+        order by create_time desc
+        limit #{offset},#{limit}
+    </select>
+
+    <select id="selectUserCommentsCount" resultType="int">
+        select count(id)
+        from comment
+        where user_id = #{userId}
+        and status=0
+    </select>
+
+    <select id="selectCommentById" resultType="Comment">
+        select <include refid="selectFields"></include>
+        from comment
+        where status=0
+        and id=#{id}
+    </select>
+    
 </mapper>

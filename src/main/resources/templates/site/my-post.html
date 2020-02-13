@@ -71,7 +71,7 @@
 							<a class="nav-link active" th:href="@{|/discuss/detail/postDiscuss/${user.id}|}">我的帖子</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="my-reply.html">我的回复</a>
+							<a class="nav-link" th:href="@{|/comment/detail/commentDiscuss/${user.id}|}">我的回复</a>
 						</li>
 					</ul>
 					<a th:href="@{|/user/profile/${user.id}|}" class="text-muted position-absolute rt-0">返回个人主页&gt;</a>
