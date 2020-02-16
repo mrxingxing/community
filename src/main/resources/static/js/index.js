@@ -5,6 +5,13 @@ $(function(){
 function publish() {
 	$("#publishModal").modal("hide");
 
+	//设置CSRF令牌头
+/*	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	$(document).ajaxSend(function (e,xhr,options) {
+		xhr.setRequestHeader(header,token);
+	});*/
+
 	//获取标题&&内容
 	var title = $("#recipient-name").val();
 	var content = $("#message-text").val();
@@ -22,7 +29,7 @@ function publish() {
 			setTimeout(function(){
 				$("#hintModal").modal("hide");
 				if(data.code==0){
-					window.location.reload();
+					//window.location.reload();
 				}
 			}, 2000);
 		}
