@@ -8,7 +8,9 @@ import com.neu.community.service.LikeService;
 import com.neu.community.service.UserService;
 import com.neu.community.util.CommunityConstant;
 import com.neu.community.util.HostHolder;
+import com.neu.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +41,9 @@ public class CommentController implements CommunityConstant {
 
     @Autowired
     private DiscussPostService discussPostService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @RequestMapping(path = "/detail/commentDiscuss/{userId}",method = RequestMethod.GET)
     public String getUserComments(@PathVariable("userId") int userId, Model model, Page page){
@@ -108,6 +113,9 @@ public class CommentController implements CommunityConstant {
                     .setEntityType(ENTITY_TYPE_POST)
                     .setEntityId(discussPostId);
              eventProducer.fireEvent(event);
+
+            String redisKey = RedisKeyUtil.getPostScoreKey();
+            redisTemplate.opsForSet().add(redisKey,discussPostId);
         }
 
         return "redirect:/discuss/detail/"+discussPostId;

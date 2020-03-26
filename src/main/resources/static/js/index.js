@@ -2,6 +2,11 @@ $(function(){
 	$("#publishBtn").click(publish);
 });
 
+function setUp(){
+	$("#publishModal").modal("hide");
+
+}
+
 function publish() {
 	$("#publishModal").modal("hide");
 

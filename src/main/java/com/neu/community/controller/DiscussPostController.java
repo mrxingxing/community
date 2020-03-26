@@ -9,7 +9,9 @@ import com.neu.community.service.UserService;
 import com.neu.community.util.CommunityConstant;
 import com.neu.community.util.CommunityUtil;
 import com.neu.community.util.HostHolder;
+import com.neu.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,9 @@ public class DiscussPostController implements CommunityConstant {
     @Autowired
     private EventProducer eventProducer;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @RequestMapping(path = "/add",method = RequestMethod.POST)
     @ResponseBody
     public String addDiscussPost(String title,String content){
@@ -59,6 +64,10 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(post.getId());
         eventProducer.fireEvent(event);
 
+        //计算新帖分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,post.getId());
+
         //报错统一处理
         return CommunityUtil.getJSONString(0,"发布成功");
     }
@@ -78,7 +87,7 @@ public class DiscussPostController implements CommunityConstant {
         int rows = discussPostService.findDiscussPostRows(userId);
         page.setRows(rows);
 
-        List<DiscussPost> postList = discussPostService.findDiscussPosts(userId,page.getOffset(),page.getLimit());
+        List<DiscussPost> postList = discussPostService.findDiscussPosts(userId,page.getOffset(),page.getLimit(),0);
         model.addAttribute("postCount",rows);
 
         List<Map<String,Object>> postMap = new ArrayList<>();
@@ -215,6 +224,10 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
+        //计算加精帖分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,id);
+
         return CommunityUtil.getJSONString(0);
     }
 
@@ -229,6 +242,10 @@ public class DiscussPostController implements CommunityConstant {
                 .setEntityType(ENTITY_TYPE_POST)
                 .setEntityId(id);
         eventProducer.fireEvent(event);
+
+        //计算取消加精帖分数
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,id);
 
         return CommunityUtil.getJSONString(0);
     }

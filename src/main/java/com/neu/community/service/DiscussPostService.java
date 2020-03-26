@@ -2,6 +2,7 @@ package com.neu.community.service;
 
 import com.neu.community.dao.DiscussPostMapper;
 import com.neu.community.entity.DiscussPost;
+import com.neu.community.util.RedisKeyUtil;
 import com.neu.community.util.SensitiveFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class DiscussPostService {
@@ -22,12 +24,17 @@ public class DiscussPostService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit){
-        return discussPostMapper.selectDiscussPosts(userId,offset,limit);
+    public List<DiscussPost> findDiscussPosts(int userId,int offset,int limit,int orderMode){
+        return discussPostMapper.selectDiscussPosts(userId,offset,limit,orderMode);
     }
 
     public int findDiscussPostRows(int userId){
         return discussPostMapper.selectDiscussPostRows(userId);
+    }
+
+    public Set<String> findDiscussLabels(){
+        String redisKey = RedisKeyUtil.getLabel();
+        return redisTemplate.opsForSet().members(redisKey);
     }
 
     public int addDiscussPosts(DiscussPost post){
@@ -59,4 +66,10 @@ public class DiscussPostService {
     public int updateStatus(int id,int status){
         return discussPostMapper.updateStatus(id,status);
     }
+
+    public int updateScore(int id,double score){
+        return discussPostMapper.updateScore(id,score);
+    }
+
+
 }

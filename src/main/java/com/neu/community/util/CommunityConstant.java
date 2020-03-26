@@ -13,6 +13,9 @@ public interface CommunityConstant {
     //记住超时时间 100天
     int REMEMBER_EXPIRED_SECONDS=3600*24*100;
 
+    //帖子状态：删除
+    int POST_STATUS_DELETE=2;
+
     //贴子
     int ENTITY_TYPE_POST=1;
     //评论

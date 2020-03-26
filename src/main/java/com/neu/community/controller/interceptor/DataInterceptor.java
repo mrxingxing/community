@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Component
-public class DateInterceptor implements HandlerInterceptor {
+public class DataInterceptor implements HandlerInterceptor {
 
     @Autowired
     private DataService dataService;

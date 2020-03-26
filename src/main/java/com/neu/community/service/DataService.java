@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class DateService {
+public class DataService {
 
     @Autowired
     private RedisTemplate redisTemplate;

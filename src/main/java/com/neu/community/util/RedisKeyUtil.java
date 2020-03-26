@@ -18,7 +18,13 @@ public class RedisKeyUtil {
 
     private static final String PREFIX_USER = "user";
 
-//    private static final String PREFIX_POST = "post";
+    private static final String PREFIX_UV = "uv";
+
+    private static final String PREFIX_DAU = "dau";
+
+    private static final String PREFIX_POST = "post";
+
+    private static final String PREFIX_LABEL = "label";
 //
 //    private static final String PREFIX_COMMENT = "comment";
 
@@ -66,4 +72,31 @@ public class RedisKeyUtil {
 //    public static String getCommentKey(int userId){
 //        return PREFIX_COMMENT+SPLIT+userId;
 //    }
+
+    //单日uv
+    public static String getUVKey(String date){
+        return PREFIX_UV+SPLIT+date;
+    }
+    //区间UV
+    public static String getUVKey(String startDate,String endDate){
+        return PREFIX_UV+SPLIT+startDate+SPLIT+endDate;
+    }
+
+    //单日DAU
+    public static String getDAUKey(String date){
+        return PREFIX_DAU+SPLIT+date;
+    }
+    //区间DAU
+    public static String getDAUKey(String startDate,String endDate){
+        return PREFIX_DAU+SPLIT+startDate+SPLIT+endDate;
+    }
+
+    //帖子分数
+    public static String getPostScoreKey(){
+        return PREFIX_POST+SPLIT+"score";
+    }
+
+    public static String getLabel(){
+        return PREFIX_LABEL;
+    }
 }

@@ -1,5 +1,7 @@
 package com.neu.community;
 
+import com.neu.community.util.CommunityUtil;
+import com.neu.community.util.RedisKeyUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +51,20 @@ public class RedisTest {
         System.out.println(redisTemplate.opsForList().leftPop(redisKey));
         System.out.println(redisTemplate.opsForList().leftPop(redisKey));
 
+    }
 
+    @Test
+    public void testLabel(){
+        String redisKey = RedisKeyUtil.getLabel();
+        redisTemplate.opsForSet().add(redisKey,"攻略");
+        redisTemplate.opsForSet().add(redisKey,"游记");
+        redisTemplate.opsForSet().add(redisKey,"国内");
+        redisTemplate.opsForSet().add(redisKey,"欧洲");
+        redisTemplate.opsForSet().add(redisKey,"吐槽");
+        redisTemplate.opsForSet().add(redisKey,"东南亚");
+        redisTemplate.opsForSet().add(redisKey,"日韩");
+        redisTemplate.opsForSet().add(redisKey,"北美");
+        redisTemplate.opsForSet().add(redisKey,"俄罗斯");
     }
 
 }
