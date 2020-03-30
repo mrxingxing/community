@@ -30,6 +30,14 @@ public interface CommunityConstant {
     String TOPIC_FOLLOW="follow";
     //事件删除
     String TOPIC_DELETE="delete";
+    //事件置顶
+    String TOPIC_TOP="top";
+    //事件取消置顶
+    String TOPIC_UNTOP="unTop";
+    //事件加精
+    String TOPIC_WONDERFUL="wonderful";
+    //事件取消加精
+    String TOPIC_UNWONDERFUL="unWonderful";
     //SYSTEM的id
     int SYSTEM_USER_ID = 1;
     //事件发帖
@@ -40,6 +48,8 @@ public interface CommunityConstant {
     String AUTHORITY_ADMIN = "admin";
     //版主
     String AUTHORITY_MODERATOR = "moderator";
+    //分享
+    String TOPIC_SHARE = "share";
 
 
 }

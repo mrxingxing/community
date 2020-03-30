@@ -3,6 +3,8 @@ $(function () {
     $("#unTopBtn").click(setUnTop);
     $("#wonderfulBtn").click(setWonderful);
     $("#unWonderfulBtn").click(setUnWonderful);
+    $("#favoriteBtn").click(setFavorite);
+    $("#unFavoriteBtn").click(setUnFavorite);
     $("#deleteBtn").click(setDelete);
 });
 
@@ -92,6 +94,37 @@ function setDelete() {
             data=$.parseJSON(data);
             if(data.code==0){
                 location.href=CONTEXT_PATH+"/index";
+            }else{
+                alert(data.msg);
+            }
+        }
+    );
+}
+
+function setFavorite() {
+    $.post(
+        CONTEXT_PATH+"/discuss/favorite",
+        {"userId":$("#userId").val(),"entityId":$("#postId").val()},
+        function (data) {
+            data=$.parseJSON(data);
+            console.log(data);
+            if(data.code==0){
+                location.reload();
+            }else{
+                alert(data.msg);
+            }
+        }
+    );
+}
+
+function setUnFavorite() {
+    $.post(
+        CONTEXT_PATH+"/discuss/unFavorite",
+        {"userId":$("#userId").val(),"entityId":$("#postId").val()},
+        function (data) {
+            data=$.parseJSON(data);
+            if(data.code==0){
+                location.reload();
             }else{
                 alert(data.msg);
             }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,7 +56,14 @@ public class CommentService implements CommunityConstant {
     }
 
     public List<Comment> findUserComments(int userId,int offset,int limit){
-        return commentMapper.selectUserCommentsById(userId, offset, limit);
+        List<Comment> ans = commentMapper.selectUserCommentsById(userId, offset, limit);
+        List<Comment> res = new ArrayList<>();
+        for(Comment com:ans){
+            if(com.getStatus()!=2){
+                res.add(com);
+            }
+        }
+        return res;
     }
 
     public int findUserCommentsCount(int userId){

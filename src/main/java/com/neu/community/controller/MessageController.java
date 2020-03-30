@@ -224,6 +224,28 @@ public class MessageController implements CommunityConstant {
             model.addAttribute("followNotice",messageVO3);
         }
 
+        //查询删帖类通知
+        message = messageService.findLatestNotice(user.getId(),TOPIC_DELETE);
+        if(message!=null){
+            Map<String,Object> messageVO4 = new HashMap<>();
+            messageVO4.put("message",message);
+            String content = HtmlUtils.htmlUnescape(message.getContent());
+
+            Map<String,Object> data4 = JSONObject.parseObject(content,HashMap.class);
+            messageVO4.put("postTitle",data4.get("postTitle"));
+            messageVO4.put("postContent",data4.get("postContent"));
+
+            int count = messageService.findNoticeCount(user.getId(),TOPIC_DELETE);
+
+            messageVO4.put("count",count);
+
+            int unread = messageService.findNoticeUnreadCount(user.getId(),TOPIC_DELETE);
+
+            messageVO4.put("unread",unread);
+
+            model.addAttribute("deleteNotice",messageVO4);
+        }
+
         //查询未读消息数量
         int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(),null);
         model.addAttribute("letterUnreadCount",letterUnreadCount);
@@ -249,16 +271,33 @@ public class MessageController implements CommunityConstant {
                 map.put("notice",notice);
                 String content = HtmlUtils.htmlUnescape(notice.getContent());
                 Map<String,Object> data = JSONObject.parseObject(content,HashMap.class);
-                map.put("user",userService.findUserById((Integer)data.get("userId")));
-                map.put("entityType",data.get("entityType"));
-                map.put("entityId",data.get("entityId"));
-                map.put("postId",data.get("postId"));
+                if(data.containsKey("userId")){
+                    map.put("user",userService.findUserById((Integer)data.get("userId")));
+                }
+                if(data.containsKey("entityType")){
+                    map.put("entityType",data.get("entityType"));
+                }
+                if(data.containsKey("entityId")){
+                    map.put("entityId",data.get("entityId"));
+                }
+                if(data.containsKey("postId")){
+                    map.put("postId",data.get("postId"));
+                }
+                if(data.containsKey("postTitle")){
+                    map.put("postTitle",data.get("postTitle"));
+                }
+                if(data.containsKey("postContent")){
+                    map.put("postContent",data.get("postContent"));
+                }
                 map.put("fromUser",userService.findUserById(notice.getFromId()));
 
                 noticeVoList.add(map);
             }
         }
         model.addAttribute("notices",noticeVoList);
+
+
+
 
         List<Integer> ids = getLetterIds(noticeList);
         if(!ids.isEmpty()){

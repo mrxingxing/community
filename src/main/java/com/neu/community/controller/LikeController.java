@@ -24,6 +24,7 @@ public class LikeController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
+
     @Autowired
     private HostHolder hostHolder;
 
@@ -37,6 +38,10 @@ public class LikeController implements CommunityConstant {
     @ResponseBody
     public String like(int entityType,int entityId,int entityUserId,int postId){
         User user = hostHolder.getUser();
+
+        if(user==null){
+            return CommunityUtil.getJSONString(403,"您未登录，无法点赞");
+        }
 
         likeService.like(user.getId(),entityType,entityId,entityUserId);
 

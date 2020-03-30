@@ -2,6 +2,7 @@ package com.neu.community.service;
 
 import com.neu.community.dao.elasticsearch.DiscussPostRepository;
 import com.neu.community.entity.DiscussPost;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -45,7 +46,7 @@ public class ElasticSearchService {
 
     public Page<DiscussPost> searchDiscussPost(String keyword,int current,int limit){
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery(keyword,"title","content"))
+                .withQuery(QueryBuilders.multiMatchQuery(keyword,"title","content","label"))
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))
@@ -85,6 +86,14 @@ public class ElasticSearchService {
 
                     String commentCount = hit.getSourceAsMap().get("commentCount").toString();
                     post.setCommentCount(Integer.valueOf(commentCount));
+
+                    if(StringUtils.isNotEmpty((String)hit.getSourceAsMap().get("label"))){
+                        String label = hit.getSourceAsMap().get("label").toString();
+                        post.setLabel(label);
+                    }else{
+                        post.setLabel("");
+                    }
+
 
                     HighlightField titleField = hit.getHighlightFields().get("title");
                     if(titleField!=null){

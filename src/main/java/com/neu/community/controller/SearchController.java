@@ -12,10 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class SearchController implements CommunityConstant {
@@ -40,6 +37,10 @@ public class SearchController implements CommunityConstant {
                 map.put("post",post);
                 map.put("user",userService.findUserById(post.getUserId()));
                 map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
+                if(!post.getLabel().equals("")){
+                    List<String> labels = Arrays.asList(post.getLabel().split(","));
+                    map.put("labels",labels);
+                }
                 discussPosts.add(map);
             }
         }

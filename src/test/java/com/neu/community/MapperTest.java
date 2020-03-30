@@ -21,10 +21,12 @@ public class MapperTest {
     private UserMapper userMapper;
 
     @Autowired
-    private DiscussPostMapper discussPostMapper;
+    private FavoriteMapper favoriteMapper;
 
     @Autowired
-    private LoginTicketMapper loginTicketMapper;
+    private DiscussPostMapper discussPostMapper;
+
+
 
     @Autowired
     private CommentMapper commentMapper;
@@ -33,11 +35,29 @@ public class MapperTest {
     private MessageMapper messageMapper;
 
     @Test
+    public void testFavorite(){
+        System.out.println(favoriteMapper.isFavoritePost(153,281));
+    }
+
+    @Test
+    public void testPostFavoriteCount(){
+        System.out.println(favoriteMapper.selectPostFavoriteCount(228));
+    }
+
+    @Test
     public void testSelectUser(){
         User user = userMapper.selectById(1);
         System.out.println(user);
         user = userMapper.selectByName("SYSTEM");
         System.out.println(user);
+    }
+
+    @Test
+    public void testSelectFavorite(){
+        System.out.println(favoriteMapper.selectUserFavoritesById(153,0,5));
+        List<Favorite> ans = favoriteMapper.selectUserFavoritesById(153, 0, 5);
+        System.out.println(ans);
+
     }
 
     @Test
@@ -92,26 +112,6 @@ public class MapperTest {
         System.out.println(res);
     }
 
-    @Test
-    public void testInsertLoginTicket(){
-
-        LoginTicket loginTicket = new LoginTicket();
-        loginTicket.setUserId(101);
-        loginTicket.setTicket("abc");
-        loginTicket.setStatus(0);
-        loginTicket.setExpired(new Date(System.currentTimeMillis()+1000*60*10));
-
-        loginTicketMapper.insertLoginTicket(loginTicket);
-    }
-
-    @Test
-    public void testSelectLoginTicket(){
-        LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
-        System.out.println(loginTicket);
-        loginTicketMapper.updateStatus("abc",1);
-        loginTicket=loginTicketMapper.selectByTicket("abc");
-        System.out.println(loginTicket);
-    }
 
     @Test
     public void testSelectDiscussPostById(){

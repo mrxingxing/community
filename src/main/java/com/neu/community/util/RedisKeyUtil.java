@@ -25,6 +25,7 @@ public class RedisKeyUtil {
     private static final String PREFIX_POST = "post";
 
     private static final String PREFIX_LABEL = "label";
+
 //
 //    private static final String PREFIX_COMMENT = "comment";
 
@@ -95,8 +96,9 @@ public class RedisKeyUtil {
     public static String getPostScoreKey(){
         return PREFIX_POST+SPLIT+"score";
     }
-
+    //帖子标签
     public static String getLabel(){
         return PREFIX_LABEL;
     }
+
 }

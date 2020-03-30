@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -72,6 +73,11 @@ public class CommunityUtil {
 
     public static String getJSONString(int code){
         return getJSONString(code,"",null);
+    }
+
+    public static String toJSONString(List<String> list){
+        JSONObject json = new JSONObject();
+        return json.toJSONString(list);
     }
 
 

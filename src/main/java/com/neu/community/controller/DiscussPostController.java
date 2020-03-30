@@ -2,14 +2,12 @@ package com.neu.community.controller;
 
 import com.neu.community.Event.EventProducer;
 import com.neu.community.entity.*;
-import com.neu.community.service.CommentService;
-import com.neu.community.service.DiscussPostService;
-import com.neu.community.service.LikeService;
-import com.neu.community.service.UserService;
+import com.neu.community.service.*;
 import com.neu.community.util.CommunityConstant;
 import com.neu.community.util.CommunityUtil;
 import com.neu.community.util.HostHolder;
 import com.neu.community.util.RedisKeyUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -23,6 +21,9 @@ import java.util.*;
 public class DiscussPostController implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
+
+    @Autowired
+    private FavoriteService favoriteService;
 
     @Autowired
     private UserService userService;
@@ -44,7 +45,7 @@ public class DiscussPostController implements CommunityConstant {
 
     @RequestMapping(path = "/add",method = RequestMethod.POST)
     @ResponseBody
-    public String addDiscussPost(String title,String content){
+    public String addDiscussPost(String title,String content,String labels){
         User user = hostHolder.getUser();
         if(user == null){
             return CommunityUtil.getJSONString(403,"恁没登录嗷");
@@ -52,6 +53,9 @@ public class DiscussPostController implements CommunityConstant {
         DiscussPost post = new DiscussPost();
         post.setUserId(user.getId());
         post.setTitle(title);
+        if(StringUtils.isNotBlank(labels)){
+            post.setLabel(labels);
+        }
         post.setContent(content);
         post.setCreateTime(new Date());
         discussPostService.addDiscussPosts(post);
@@ -101,6 +105,40 @@ public class DiscussPostController implements CommunityConstant {
         model.addAttribute("postMap",postMap);
         return "/site/my-post";
     }
+    @RequestMapping(path = "/detail/favorite/{userId}",method = RequestMethod.GET)
+    public String getUserFavorite(@PathVariable("userId") int userId,Model model,Page page){
+
+        User user = userService.findUserById(userId);
+        if(user==null){
+            throw new RuntimeException("该用户不存在");
+        }
+        User nowUser = hostHolder.getUser();
+        if(nowUser.getId()!=user.getId()){
+            throw new RuntimeException("无法查看他人收藏的帖子");
+        }
+
+        //用户基本信息
+        model.addAttribute("user",user);
+
+        page.setLimit(5);
+        page.setPath("/discuss/detail/favorite/"+userId);
+        int rows = favoriteService.findUserFavoritePostCount(userId);
+        page.setRows(rows);
+
+        List<DiscussPost> postList = favoriteService.findUserFavoritePosts(userId,page.getLimit(),page.getOffset());
+        model.addAttribute("postCount",rows);
+
+        List<Map<String,Object>> postMap = new ArrayList<>();
+        for(DiscussPost post:postList){
+            Map<String,Object> map = new HashMap<>();
+            map.put("post",post);
+            map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
+            postMap.add(map);
+        }
+
+        model.addAttribute("postMap",postMap);
+        return "/site/my-favorite";
+    }
 
     @RequestMapping(path = "/detail/{discussPostId}",method = RequestMethod.GET)
     public String getDiscussPost(@PathVariable ("discussPostId") int discussPostId, Model model,Page page){
@@ -117,6 +155,15 @@ public class DiscussPostController implements CommunityConstant {
         int likeStatus =
                 hostHolder.getUser()==null?0:likeService.findEntityLikeStatus(hostHolder.getUser().getId(),ENTITY_TYPE_POST,discussPostId);
         model.addAttribute("likeStatus",likeStatus);
+
+        User nowUser = hostHolder.getUser();
+
+        int favoriteStatus =
+                favoriteService.findIsFavoritePost(nowUser==null?0:hostHolder.getUser().getId(),discussPostId);
+        model.addAttribute("favoriteStatus",favoriteStatus);
+
+        model.addAttribute("userId",nowUser==null?0:hostHolder.getUser().getId());
+
 
 
         page.setLimit(5);
@@ -185,12 +232,15 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/top",method = RequestMethod.POST)
     @ResponseBody
     public String setTop(int id){
+        DiscussPost post = discussPostService.findDiscussPostById(id);
         discussPostService.updateType(id,1);
         //同步到elasticsearch
         Event event = new Event()
-                .setTopic(TOPIC_PUBLISH)
+                .setTopic(TOPIC_WONDERFUL)
                 .setUserId(hostHolder.getUser().getId())
                 .setEntityType(ENTITY_TYPE_POST)
+                .setEntityUserId(post.getUserId())
+                .setData("postTitle",post.getTitle())
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
@@ -200,12 +250,15 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/unTop",method = RequestMethod.POST)
     @ResponseBody
     public String setUnTop(int id){
+        DiscussPost post = discussPostService.findDiscussPostById(id);
         discussPostService.updateType(id,0);
         //同步到elasticsearch
         Event event = new Event()
-                .setTopic(TOPIC_PUBLISH)
+                .setTopic(TOPIC_UNWONDERFUL)
                 .setUserId(hostHolder.getUser().getId())
                 .setEntityType(ENTITY_TYPE_POST)
+                .setEntityUserId(post.getUserId())
+                .setData("postTitle",post.getTitle())
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
@@ -215,12 +268,15 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/wonderful",method = RequestMethod.POST)
     @ResponseBody
     public String setWonderful(int id){
+        DiscussPost post = discussPostService.findDiscussPostById(id);
         discussPostService.updateStatus(id,1);
         //同步到elasticsearch
         Event event = new Event()
                 .setTopic(TOPIC_PUBLISH)
                 .setUserId(hostHolder.getUser().getId())
                 .setEntityType(ENTITY_TYPE_POST)
+                .setEntityUserId(post.getUserId())
+                .setData("postTitle",post.getTitle())
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
@@ -234,12 +290,15 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/unWonderful",method = RequestMethod.POST)
     @ResponseBody
     public String setUnWonderful(int id){
+        DiscussPost post = discussPostService.findDiscussPostById(id);
         discussPostService.updateStatus(id,0);
         //同步到elasticsearch
         Event event = new Event()
                 .setTopic(TOPIC_PUBLISH)
                 .setUserId(hostHolder.getUser().getId())
                 .setEntityType(ENTITY_TYPE_POST)
+                .setEntityUserId(post.getUserId())
+                .setData("postTitle",post.getTitle())
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
@@ -253,17 +312,65 @@ public class DiscussPostController implements CommunityConstant {
     @RequestMapping(path = "/delete",method = RequestMethod.POST)
     @ResponseBody
     public String setDelete(int id){
+        DiscussPost post = discussPostService.findDiscussPostById(id);
         discussPostService.updateStatus(id,2);
         //触发删帖事件
         Event event = new Event()
                 .setTopic(TOPIC_DELETE)
                 .setUserId(hostHolder.getUser().getId())
                 .setEntityType(ENTITY_TYPE_POST)
+                .setEntityUserId(post.getUserId())
+                .setData("postTitle",post.getTitle())
+                .setData("postContent",post.getContent())
                 .setEntityId(id);
         eventProducer.fireEvent(event);
 
         return CommunityUtil.getJSONString(0);
     }
 
+    @RequestMapping(path = "/favorite",method = RequestMethod.POST)
+    @ResponseBody
+    public String setFavorite(int userId,int entityId){
 
+        User user = userService.findUserById(userId);
+        if(user==null){
+            throw new RuntimeException("该用户不存在");
+        }
+        User nowUser = hostHolder.getUser();
+        if(userId!=nowUser.getId()){
+            throw new RuntimeException("无法替他人收藏帖子");
+        }
+
+        favoriteService.addUserFavoritePosts(userId,entityId,1);
+        return CommunityUtil.getJSONString(0);
+    }
+
+    @RequestMapping(path = "/unFavorite",method = RequestMethod.POST)
+    @ResponseBody
+    public String setUnFavorite(int userId,int entityId){
+        User user = userService.findUserById(userId);
+        if(user==null){
+            throw new RuntimeException("该用户不存在");
+        }
+        User nowUser = hostHolder.getUser();
+        if(userId!=nowUser.getId()){
+            throw new RuntimeException("无法替他人取消收藏帖子");
+        }
+
+        favoriteService.deleteUserFavoritePosts(userId,entityId);
+
+        return CommunityUtil.getJSONString(0);
+    }
+
+    @RequestMapping(path = "/labels",method = RequestMethod.GET )
+    @ResponseBody
+    public String getLabels(){
+
+        Set<String> set = discussPostService.findDiscussLabels();
+
+        List<String> labels = new ArrayList<>(set);
+
+        return CommunityUtil.toJSONString(labels);
+
+    }
 }

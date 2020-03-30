@@ -39,6 +39,7 @@ public class HomeController implements CommunityConstant {
         page.setPath("/index?orderMode="+orderMode);
 
         List<DiscussPost> list = discussPostService.findDiscussPosts(0,page.getOffset(),page.getLimit(),orderMode);
+        List<String> labelList = new ArrayList<>(discussPostService.findDiscussLabels());
         List<Map<String,Object>> discussPosts = new ArrayList<>();
         if(list!=null){
             for(DiscussPost post:list){
@@ -48,12 +49,10 @@ public class HomeController implements CommunityConstant {
                 User user = userService.findUserById(post.getUserId());
                 map.put("user",user);
                 String[] arr =null;
-                System.out.println(post.getLabel()!=null);
                 if(post.getLabel()!=null){
                     arr=post.getLabel().split(",");
                     for(String s :arr){
                         labels.add(s);
-                        System.out.println(s);
                     }
                 }
                 map.put("labels",labels);
@@ -62,6 +61,7 @@ public class HomeController implements CommunityConstant {
                 discussPosts.add(map);
             }
         }
+        model.addAttribute("labelList",labelList);
         model.addAttribute("discussPosts",discussPosts);
         model.addAttribute("orderMode",orderMode);
         return "index";

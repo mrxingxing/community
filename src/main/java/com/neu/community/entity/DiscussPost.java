@@ -37,17 +37,8 @@ public class DiscussPost {
     @Field(type = FieldType.Double)
     private double score;
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     @Field(type = FieldType.Text,analyzer = "ik_max_word",searchAnalyzer = "ik_smart")
     private String label;
-
 
     public int getId() {
         return id;
@@ -119,6 +110,14 @@ public class DiscussPost {
 
     public void setScore(double score) {
         this.score = score;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     @Override

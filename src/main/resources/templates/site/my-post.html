@@ -3,10 +3,10 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
+	<link rel="icon" th:href="@{/img/favicon.ico}"/>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
-	<title>牛客网-个人主页</title>
+	<title>LFY-个人主页</title>
 </head>
 <body>
 	<div class="nk-container">
@@ -73,6 +73,9 @@
 						<li class="nav-item">
 							<a class="nav-link" th:href="@{|/comment/detail/commentDiscuss/${user.id}|}">我的回复</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{|/discuss/detail/favorite/${user.id}|}">我的收藏</a>
+						</li>
 					</ul>
 					<a th:href="@{|/user/profile/${user.id}|}" class="text-muted position-absolute rt-0">返回个人主页&gt;</a>
 				</div>
@@ -85,12 +88,7 @@
 								<a th:href="@{|/discuss/detail/${map.post.id}|}" class="text-info" th:utext="${map.post.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
 							</div>
 							<div class="mt-1 font-size-14" th:utext="${map.post.content}">
-								金三银四的金三已经到了，你还沉浸在过年的喜悦中吗？
-								如果是，那我要让你清醒一下了：目前大部分公司已经开启了内推，正式网申也将在3月份陆续开始，金三银四，春招的求职黄金时期已经来啦！！！
-								再不准备，作为19应届生的你可能就找不到工作了。。。作为20届实习生的你可能就找不到实习了。。。
-								现阶段时间紧，任务重，能做到短时间内快速提升的也就只有算法了，
-								那么算法要怎么复习？重点在哪里？常见笔试面试算法题型和解题思路以及最优代码是怎样的？
-								跟左程云老师学算法，不仅能解决以上所有问题，还能在短时间内得到最大程度的提升！！！								
+
 							</div>
 							<div class="text-right font-size-12 text-muted">
 								赞 <i class="mr-3" th:text="${map.likeCount}">11</i> 发布于 <b th:text="${#dates.format(map.post.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-15 10:10:10</b>
@@ -121,7 +119,7 @@
 				<div class="row">
 					<!-- 二维码 -->
 					<div class="col-4 qrcode">
-						<img src="https://uploadfiles.nowcoder.com/app/app_download.png" class="img-thumbnail" style="width:136px;" />
+						<img th:src="@{/img/inflame.png}" width="500" class="img-thumbnail" style="width:136px;" />
 					</div>
 					<!-- 公司信息 -->
 					<div class="col-8 detail-info">
@@ -156,18 +154,18 @@
 							<div class="col">
 								<ul class="nav btn-group-vertical company-info">
 									<li class="nav-item text-white-50">
-										公司地址：北京市朝阳区大屯路东金泉时代3-2708北京牛客科技有限公司
+										公司地址：斗鱼TV419697，TI7硬实力冠军三号位inflame直播间
 									</li>
 									<li class="nav-item text-white-50">
-										联系方式：010-60728802(电话)&nbsp;&nbsp;&nbsp;&nbsp;admin@nowcoder.com
+										联系方式：https://www.douyu.com/419697
 									</li>
 									<li class="nav-item text-white-50">
-										牛客科技©2018 All rights reserved
+										TI7 CHAMPION LGD FOREVER YOUNG©2017 All rights reserved
 									</li>
 									<li class="nav-item text-white-50">
-										京ICP备14055008号-4 &nbsp;&nbsp;&nbsp;&nbsp;
+										沪ICP备9999号 &nbsp;&nbsp;&nbsp;&nbsp;
 										<img src="http://static.nowcoder.com/company/images/res/ghs.png" style="width:18px;" />
-										京公网安备 11010502036488号
+										青岛网安备 60937号
 									</li>
 								</ul>
 							</div>

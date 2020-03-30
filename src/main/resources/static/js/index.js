@@ -20,10 +20,13 @@ function publish() {
 	//获取标题&&内容
 	var title = $("#recipient-name").val();
 	var content = $("#message-text").val();
+	var labels = $("#labelPicker").val();
+	labels=labels.toString();
+
 	//发post.ajax
 	$.post(
 		CONTEXT_PATH + "/discuss/add",
-		{"title":title,"content":content},
+		{"title":title,"content":content,"labels":labels},
 		function (data) {
 			data = $.parseJSON(data);
 			//提示框中显示返回消息

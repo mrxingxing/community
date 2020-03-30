@@ -3,6 +3,7 @@ package com.neu.community.quartz;
 import com.neu.community.entity.DiscussPost;
 import com.neu.community.service.DiscussPostService;
 import com.neu.community.service.ElasticSearchService;
+import com.neu.community.service.FavoriteService;
 import com.neu.community.service.LikeService;
 import com.neu.community.util.CommunityConstant;
 import com.neu.community.util.RedisKeyUtil;
@@ -31,6 +32,9 @@ public class PostScoreRefreshJob implements Job, CommunityConstant {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private FavoriteService favoriteService;
 
     @Autowired
     private ElasticSearchService elasticSearchService;
@@ -74,9 +78,11 @@ public class PostScoreRefreshJob implements Job, CommunityConstant {
         boolean isWonderful = post.getStatus()==1;
         int commentCount=post.getCommentCount();
         long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST,postId);
+        int favoriteCount = favoriteService.findPostFavoriteCount(postId);
 
-        double w = (isWonderful?75:0)+commentCount*10+likeCount*2;
+        double w = (isWonderful?75:0)+commentCount*10+likeCount*2+favoriteCount*3;
         double score = Math.log10(Math.max(w,1))+(post.getCreateTime().getTime()-epoch.getTime())/(1000*3600*24);
+
 
         discussPostService.updateScore(postId,score);
         //更新score
