@@ -1,4 +1,6 @@
 $(function () {
+    $("#comment").click(comment);
+    $("#publishBtn").click(publish);
     $("#topBtn").click(setTop);
     $("#unTopBtn").click(setUnTop);
     $("#wonderfulBtn").click(setWonderful);
@@ -8,6 +10,47 @@ $(function () {
     $("#deleteBtn").click(setDelete);
 });
 
+function comment(){
+    var entityType = $("#entityType").val();
+    var entityId = $("#entityId").val()
+    var content = editor.txt.html();
+    $.post(
+        CONTEXT_PATH+"/comment"+"/add/"+entityId,
+        {"entityType":entityType,"entityId":entityId,"content":content},
+        function () {
+            location.reload();
+        }
+    );
+}
+
+function publish() {
+    $("#publishModal").modal("hide");
+
+    //获取标题&&内容
+    var postId = $("#postId").val();
+    var content = editor2.txt.html();
+
+    //发post.ajax
+    $.post(
+        CONTEXT_PATH + "/discuss/update",
+        {"postId":postId,"content":content},
+        function (data) {
+            data = $.parseJSON(data);
+            //提示框中显示返回消息
+            $("hintBody").text(data.msg);
+            //显示提示框
+            $("#hintModal").modal("show");
+            //2秒后隐藏提示框
+            setTimeout(function(){
+                $("#hintModal").modal("hide");
+                if(data.code==0){
+                    window.location.reload();
+                }
+            }, 2000);
+        }
+    )
+
+}
 
 function like(btn,entityType,entityId,entityUserId,postId) {
     $.post(

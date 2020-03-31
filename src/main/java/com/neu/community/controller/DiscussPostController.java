@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.*;
 
@@ -76,6 +77,30 @@ public class DiscussPostController implements CommunityConstant {
         return CommunityUtil.getJSONString(0,"发布成功");
     }
 
+    @RequestMapping(path = "/update",method = RequestMethod.POST)
+    @ResponseBody
+    public String updateContent(int postId,String content){
+        User user = hostHolder.getUser();
+        if(user == null){
+            return CommunityUtil.getJSONString(403,"恁没登录嗷");
+        }
+        DiscussPost post = discussPostService.findDiscussPostById(postId);
+        if(post==null){
+            return CommunityUtil.getJSONString(403,"帖子不存在或被删除了嗷");
+        }
+        if(post.getUserId()!=user.getId()){
+            return CommunityUtil.getJSONString(403,"您不配改别人的帖子嗷");
+        }
+        discussPostService.updateContent(post.getId(),content);
+
+        String redisKey = RedisKeyUtil.getPostScoreKey();
+        redisTemplate.opsForSet().add(redisKey,post.getId());
+
+
+        return CommunityUtil.getJSONString(0,"修改成功");
+
+    }
+
     @RequestMapping(path = "/detail/postDiscuss/{userId}",method = RequestMethod.GET)
     public String getUserPosts(@PathVariable("userId") int userId,Model model,Page page){
 
@@ -97,6 +122,7 @@ public class DiscussPostController implements CommunityConstant {
         List<Map<String,Object>> postMap = new ArrayList<>();
         for(DiscussPost post:postList){
             Map<String,Object> map = new HashMap<>();
+            post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
             map.put("post",post);
             map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
             postMap.add(map);
@@ -131,6 +157,7 @@ public class DiscussPostController implements CommunityConstant {
         List<Map<String,Object>> postMap = new ArrayList<>();
         for(DiscussPost post:postList){
             Map<String,Object> map = new HashMap<>();
+            post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
             map.put("post",post);
             map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
             postMap.add(map);
@@ -144,6 +171,7 @@ public class DiscussPostController implements CommunityConstant {
     public String getDiscussPost(@PathVariable ("discussPostId") int discussPostId, Model model,Page page){
         //贴子
         DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
+        post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
         model.addAttribute("post",post);
         //作者
         User user = userService.findUserById(post.getUserId());
@@ -179,6 +207,7 @@ public class DiscussPostController implements CommunityConstant {
             for(Comment comment : commentList){
                 //评论map
                 Map<String,Object> commentVo = new HashMap<>();
+                comment.setContent(HtmlUtils.htmlUnescape(comment.getContent()));
                 //评论
                 commentVo.put("comment",comment);
                 //作者

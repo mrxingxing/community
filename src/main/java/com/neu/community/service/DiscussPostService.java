@@ -154,5 +154,11 @@ public class DiscussPostService {
         return discussPostMapper.updateScore(id,score);
     }
 
+    public int updateContent(int id,String content){
+        content = HtmlUtils.htmlEscape(content);
+        content = sensitiveFilter.filter(content);
+        return discussPostMapper.updateContent(id,content);
+    }
+
 
 }

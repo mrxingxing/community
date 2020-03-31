@@ -28,4 +28,6 @@ public interface DiscussPostMapper {
 
     int updateScore(int id,double score);
 
+    int updateContent(int id,String content);
+
 }

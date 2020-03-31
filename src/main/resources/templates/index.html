@@ -11,7 +11,9 @@
     <link rel="stylesheet" th:href="@{css/bootstrap-select.min.css}" />
 	<link rel="stylesheet" th:href="@{/css/global.css}" />
 	<title>LFY-首页</title>
+
 </head>
+
 <body>	
 	<div class="nk-container">
 		<!-- 头部 -->
@@ -94,14 +96,19 @@
 										<input type="text" class="form-control" id="recipient-name">
 									</div>
 									<div class="form-group">
+										<!--
 										<label for="message-text" class="col-form-label">正文：</label>
 										<textarea class="form-control" id="message-text" rows="15"></textarea>
+										-->
+										<div id="editor">
+											<p></p>
+										</div>
 									</div>
 									<div class="from-group">
 										<label for="recipient-name" class="col-form-label">标签：</label>
-										<select id="labelPicker" name="labelPicker" title="请选择标签" class="selectpicker" multiple data-live-search="true" data-max-options="4">
-                                                <option th:each="label:${labelList}" th:value="${label}" th:text="${label}"></option>
-                                        </select>
+										<select id="labelPicker"  name="labelPicker" title="请选择标签" class="selectpicker" multiple data-live-search="true" data-max-options="4">
+											<option th:each="label:${labelList}" th:value="${label}" th:text="${label}"></option>
+										</select>
 									</div>
 								</form>
 							</div>
@@ -252,5 +259,13 @@
     <script th:src="@{/js/defaults-zh_CN.min.js}"></script>
 	<script th:src="@{/js/global.js}"></script>
 	<script th:src="@{/js/index.js}"></script>
+	<script type="text/javascript" th:src="@{/js/wangEditor.min.js}"></script>
+	<script type="text/javascript">
+		var E = window.wangEditor
+		var editor = new E('#editor')
+		editor.customConfig.zIndex = 1
+		editor.create()
+	</script>
+
 </body>
 </html>

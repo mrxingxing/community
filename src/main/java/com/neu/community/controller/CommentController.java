@@ -7,6 +7,7 @@ import com.neu.community.service.DiscussPostService;
 import com.neu.community.service.LikeService;
 import com.neu.community.service.UserService;
 import com.neu.community.util.CommunityConstant;
+import com.neu.community.util.CommunityUtil;
 import com.neu.community.util.HostHolder;
 import com.neu.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.websocket.server.PathParam;
 import java.util.*;
@@ -66,6 +68,7 @@ public class CommentController implements CommunityConstant {
         List<Map<String,Object>> commentsMap = new ArrayList<>();
         for(Comment comment:commentsList){
             Map<String,Object> map = new HashMap<>();
+            comment.setContent(HtmlUtils.htmlUnescape(comment.getContent()));
             map.put("comment",comment);
             map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_COMMENT,comment.getId()));
             if(comment.getEntityType()==1){

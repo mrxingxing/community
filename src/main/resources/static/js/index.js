@@ -4,7 +4,6 @@ $(function(){
 
 function setUp(){
 	$("#publishModal").modal("hide");
-
 }
 
 function publish() {
@@ -19,7 +18,7 @@ function publish() {
 
 	//获取标题&&内容
 	var title = $("#recipient-name").val();
-	var content = $("#message-text").val();
+	var content = editor.txt.html();
 	var labels = $("#labelPicker").val();
 	labels=labels.toString();
 
