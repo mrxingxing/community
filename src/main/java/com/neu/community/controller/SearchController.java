@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.util.HtmlUtils;
 
 import java.util.*;
 
@@ -34,6 +35,7 @@ public class SearchController implements CommunityConstant {
         if(searchResult!=null){
             for(DiscussPost post:searchResult){
                 Map<String,Object> map = new HashMap<>();
+                post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
                 map.put("post",post);
                 map.put("user",userService.findUserById(post.getUserId()));
                 map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));

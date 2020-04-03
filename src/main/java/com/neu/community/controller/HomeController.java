@@ -1,5 +1,7 @@
 package com.neu.community.controller;
 
+import com.neu.community.dao.DiscussPostMapper;
+import com.neu.community.dao.elasticsearch.DiscussPostRepository;
 import com.neu.community.entity.DiscussPost;
 import com.neu.community.entity.Page;
 import com.neu.community.entity.User;
@@ -22,6 +24,7 @@ import java.util.Map;
 @Controller
 public class HomeController implements CommunityConstant {
 
+
     @Autowired
     private DiscussPostService discussPostService;
 
@@ -30,6 +33,11 @@ public class HomeController implements CommunityConstant {
 
     @Autowired
     private LikeService likeService;
+
+    @RequestMapping(path = "/",method = RequestMethod.GET)
+    public String root(){
+        return "forward:/index";
+    }
     /*
     * 显示首页贴子
     * */
@@ -64,6 +72,7 @@ public class HomeController implements CommunityConstant {
         model.addAttribute("labelList",labelList);
         model.addAttribute("discussPosts",discussPosts);
         model.addAttribute("orderMode",orderMode);
+
         return "index";
     }
 

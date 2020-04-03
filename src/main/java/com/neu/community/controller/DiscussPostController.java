@@ -121,11 +121,13 @@ public class DiscussPostController implements CommunityConstant {
 
         List<Map<String,Object>> postMap = new ArrayList<>();
         for(DiscussPost post:postList){
-            Map<String,Object> map = new HashMap<>();
-            post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
-            map.put("post",post);
-            map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
-            postMap.add(map);
+            if(post.getStatus()!=2){
+                Map<String,Object> map = new HashMap<>();
+                post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
+                map.put("post",post);
+                map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
+                postMap.add(map);
+            }
         }
 
         model.addAttribute("postMap",postMap);
@@ -156,11 +158,13 @@ public class DiscussPostController implements CommunityConstant {
 
         List<Map<String,Object>> postMap = new ArrayList<>();
         for(DiscussPost post:postList){
-            Map<String,Object> map = new HashMap<>();
-            post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
-            map.put("post",post);
-            map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
-            postMap.add(map);
+            if(post.getStatus()!=2){
+                Map<String,Object> map = new HashMap<>();
+                post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
+                map.put("post",post);
+                map.put("likeCount",likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId()));
+                postMap.add(map);
+            }
         }
 
         model.addAttribute("postMap",postMap);
@@ -171,6 +175,11 @@ public class DiscussPostController implements CommunityConstant {
     public String getDiscussPost(@PathVariable ("discussPostId") int discussPostId, Model model,Page page){
         //贴子
         DiscussPost post = discussPostService.findDiscussPostById(discussPostId);
+
+        if(post.getStatus()==2){
+            return "forward:/index";
+        }
+
         post.setContent(HtmlUtils.htmlUnescape(post.getContent()));
         model.addAttribute("post",post);
         //作者

@@ -4,7 +4,9 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.neu.community.dao.DiscussPostMapper;
+import com.neu.community.dao.LabelsMapper;
 import com.neu.community.entity.DiscussPost;
+import com.neu.community.entity.Labels;
 import com.neu.community.util.RedisKeyUtil;
 import com.neu.community.util.SensitiveFilter;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -20,6 +22,7 @@ import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +39,7 @@ public class DiscussPostService {
     private SensitiveFilter sensitiveFilter;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private LabelsMapper labelsMapper;
 
     @Value("${caffeine.posts.max-size}")
     private int maxSize;
@@ -116,8 +119,12 @@ public class DiscussPostService {
     }
 
     public Set<String> findDiscussLabels(){
-        String redisKey = RedisKeyUtil.getLabel();
-        return redisTemplate.opsForSet().members(redisKey);
+        List<Labels> labelsList = labelsMapper.selectLabels();
+        Set<String> labelsSet = new HashSet<>();
+        for (Labels label : labelsList){
+            labelsSet.add(new String(label.getLabel()));
+        }
+        return labelsSet;
     }
 
     public int addDiscussPosts(DiscussPost post){

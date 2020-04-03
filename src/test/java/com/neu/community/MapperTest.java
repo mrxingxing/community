@@ -26,7 +26,8 @@ public class MapperTest {
     @Autowired
     private DiscussPostMapper discussPostMapper;
 
-
+    @Autowired
+    private LabelsMapper labelsMapper;
 
     @Autowired
     private CommentMapper commentMapper;
@@ -52,6 +53,10 @@ public class MapperTest {
         System.out.println(user);
     }
 
+    @Test
+    public void testLabels(){
+        System.out.println(labelsMapper.selectLabels());
+    }
     @Test
     public void testSelectFavorite(){
         System.out.println(favoriteMapper.selectUserFavoritesById(153,0,5));

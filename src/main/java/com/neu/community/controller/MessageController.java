@@ -180,7 +180,6 @@ public class MessageController implements CommunityConstant {
         message = messageService.findLatestNotice(user.getId(),TOPIC_LIKE);
         if(message!=null){
 
-
             Map<String,Object> messageVO2 = new HashMap<>();
             messageVO2.put("message",message);
             String content = HtmlUtils.htmlUnescape(message.getContent());
@@ -201,6 +200,7 @@ public class MessageController implements CommunityConstant {
 
             model.addAttribute("likeNotice",messageVO2);
         }
+
         //查询关注通知
         message = messageService.findLatestNotice(user.getId(),TOPIC_FOLLOW);
         if(message!=null){
@@ -233,7 +233,7 @@ public class MessageController implements CommunityConstant {
 
             Map<String,Object> data4 = JSONObject.parseObject(content,HashMap.class);
             messageVO4.put("postTitle",data4.get("postTitle"));
-            messageVO4.put("postContent",data4.get("postContent"));
+            messageVO4.put("postContent",HtmlUtils.htmlUnescape((String) data4.get("postContent")));
 
             int count = messageService.findNoticeCount(user.getId(),TOPIC_DELETE);
 

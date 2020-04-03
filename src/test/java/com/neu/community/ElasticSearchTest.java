@@ -1,8 +1,10 @@
 package com.neu.community;
 
 import com.neu.community.dao.DiscussPostMapper;
+import com.neu.community.dao.UserMapper;
 import com.neu.community.dao.elasticsearch.DiscussPostRepository;
 import com.neu.community.entity.DiscussPost;
+import com.neu.community.entity.User;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @ContextConfiguration(classes = CommunityApplication.class)
 public class ElasticSearchTest {
+
 
     @Autowired
     private DiscussPostMapper discussMapper;

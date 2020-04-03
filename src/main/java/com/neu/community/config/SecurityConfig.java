@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Comm
                         "/user/setting",
                         "/user/resetPassword",
                         "/user/upload",
+                        "/discuss/update",
                         "/discuss/add",
                         "/comment/add/**",
                         "/letter/**",

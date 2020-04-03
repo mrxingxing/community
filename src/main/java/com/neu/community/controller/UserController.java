@@ -97,6 +97,7 @@ public class UserController implements CommunityConstant {
     }
 
     //已重构
+    /*
     @LoginRequired
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model){
@@ -127,9 +128,11 @@ public class UserController implements CommunityConstant {
 
         return "redirect:/index";
     }
+    */
 
 
     //已重构
+    /*
     @RequestMapping(path = "/header/{fileName}",method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String fileName, HttpServletResponse response){
         fileName=uploadPath+"/"+fileName;
@@ -148,6 +151,7 @@ public class UserController implements CommunityConstant {
             logger.error("读取头像失败"+e.getMessage());
         }
     }
+    */
 
     @LoginRequired
     @RequestMapping(path = "/resetPassword",method = RequestMethod.POST)
